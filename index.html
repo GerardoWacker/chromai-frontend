@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de plazo fijo</title>
+    <style>
+		@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap');
+	
+		html, body {
+			padding: 0;
+			margin: 0 auto;
+			overflow: hidden;
+			font-family: 'Raleway', sans-serif;
+			background: linear-gradient(135deg, rgba(122,92,36,1) 0%, rgba(57,15,85,1) 100%);            
+            height: 100vh;   
+        }
+		
+		.container {
+			height: 100vh;
+			display: flex;
+			margin: 0 auto;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			flex-direction: column;
+		}
+		
+		.content {
+			text-align: center;
+			border-radius: 30px;
+			padding: 10px 30px;
+			background-color: white;
+			display: block;
+			width: 30%;
+			font-weight: 500;
+		}
+
+		#camera-container {
+			display: none;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 20px;
+		}
+		
+		video {
+			width: 100%;
+			max-width: 300px;
+			border-radius: 10px;
+		}
+
+		canvas {
+			margin-top: 10px;
+			width: 100%;
+			max-width: 300px;
+			border-radius: 10px;
+			border: 1px solid black;
+		}
+		
+		.login-button {
+			width: 50%;
+			margin: 20px;
+			padding: 10px 40px;
+			font-family: 'Raleway', sans-serif;
+			border-radius: 20px;
+			font-weight: 600;
+			font-size: 18px;
+			background-color: #6a28d3;
+			color: white;
+			border: none;
+			cursor: pointer;
+		}
+    </style>
+</head>
+<body>
+    <div class="container">
+		<div class="content">
+			<h3 class="m">Lorem.</h3>
+			<!-- Buttons to load image and open camera -->
+			<div id="div-with-buttons">
+				<label for="file-upload" class="login-button">Cargar archivo de imagen</label>
+				<input id="file-upload" type="file" style="display: none;" />
+				<button class="login-button" id="open-camera">Cámara</button>
+			</div>
+
+			<!-- Div to display the camera and capture the picture -->
+			<div id="camera-container">
+				<video id="video" autoplay></video>
+				<button class="login-button" id="capture-button">Capturar Imagen</button>
+				<canvas id="canvas"></canvas>
+			</div>
+		</div>
+    </div>
+
+	<script>
+// Accessing elements
+const openCameraButton = document.getElementById("open-camera");
+const captureButton = document.getElementById("capture-button");
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const cameraContainer = document.getElementById("camera-container");
+const context = canvas.getContext('2d');
+
+// Variable to track if the camera is already open
+let isCameraOpen = false;
+
+// Function to open the camera (used in both buttons)
+function openCamera() {
+    // Show the camera container but keep the captured image
+    cameraContainer.style.display = "flex";
+    video.style.display = "block";
+
+    // Only start the camera stream if it isn't already running
+    if (!isCameraOpen) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream; // Stream the video feed to the video element
+                isCameraOpen = true;
+            })
+            .catch(function (err) {
+                console.log("Error accessing the camera: " + err);
+            });
+    }
+}
+
+// Function to capture the image from the video feed
+captureButton.addEventListener("click", function () {
+    // Check if the camera is not running, reopen it
+    if (!isCameraOpen) {
+        openCamera();
+    } else {
+        // Set canvas dimensions to match the video size
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw the current video frame on the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Optional: Stop the video stream after capturing the image
+        const stream = video.srcObject;
+        const tracks = stream.getTracks();
+        tracks.forEach(function (track) {
+            track.stop(); // Stop each track (camera feed)
+        });
+
+        // Keep the canvas visible and hide the video feed
+        canvas.style.display = "block";
+        video.style.display = "none";
+
+        // Mark the camera as closed
+        isCameraOpen = false;
+    }
+});
+
+// Function to open the camera when clicking "Cámara" button
+openCameraButton.addEventListener("click", openCamera);
+
+
+	</script>
+</body>
+</html>
