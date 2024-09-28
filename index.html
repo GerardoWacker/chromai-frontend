@@ -6,19 +6,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChromAI</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+        .xl {
+            font-family: 'Poppins', sans-serif;
+            font-size: calc(3vw + 2vh);
+            font-weight: 800;
+        }
+
+        .l {
+            font-family: 'Poppins', sans-serif;
+            font-size: calc(2vw + 2vh);
+            font-weight: 800;
+        }
+
+        .m {
+            font-family: 'Poppins', sans-serif;
+            font-size: calc(1.2vw + 1vh);
+            font-weight: 800;
+        }
+
+        .mm {
+            font-family: 'Poppins', sans-serif;
+            font-size: calc(1vw + 1vh);
+            font-weight: 700;
+        }
+
+        .s {
+            font-family: 'Poppins', sans-serif;
+            font-size: calc(0.5vw + 1vh);
+            font-weight: 700;
+        }
+
+        /* Remove annoying margin in paragraphs */
+        .p-no-margin-top {
+            margin-block-start: 0;
+            margin-inline-start: 0;
+        }
+
+        .p-no-margin-bottom {
+            margin-block-end: 0;
+            margin-inline-end: 0;
+        }
 
         html, body {
             padding: 0;
             margin: 0 auto;
             overflow: hidden;
-            font-family: 'Raleway', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, rgba(122, 92, 36, 1) 0%, rgba(57, 15, 85, 1) 100%);
             height: 100vh;
         }
 
         .container {
-            min-width: 500px;
             height: 100vh;
             display: flex;
             margin: 0 auto;
@@ -28,14 +68,48 @@
             flex-direction: column;
         }
 
+        .tooltip-ai-effect {
+            background: linear-gradient(17deg, rgba(255, 65, 65, 1) 0%, rgba(218, 200, 27, 1) 10%, rgba(133, 235, 29, 1) 23%, rgba(37, 217, 197, 1) 35%, rgba(29, 159, 255, 1) 46%, rgba(189, 61, 235, 1) 57%, rgba(255, 57, 124, 1) 67%, rgba(255, 65, 65, 1) 78%, rgba(218, 200, 27, 1) 89%, rgba(133, 235, 29, 1) 100%);
+            background-size: 500% 500%;
+            animation: rainbow 20s ease-in-out infinite;
+            background-clip: text;
+            -webkit-background-clip: text;
+            transition: color .2s ease-in-out;
+            color: rgba(0, 0, 0, 0)
+        }
+
+        @keyframes rainbow {
+            0% {
+                background-position: left
+            }
+            50% {
+                background-position: right
+            }
+            100% {
+                background-position: left
+            }
+        }
+
         .content {
+            min-height: 60vh;
             text-align: center;
             border-radius: 30px;
-            padding: 10px 30px;
-            background-color: white;
+            padding: 50px;
+            background-color: #171424;
             display: block;
             width: 30%;
             font-weight: 500;
+        }
+
+        .image {
+            width: 100%;
+            height: 250px;
+            background: #8c8c8c;
+            border-radius: 10px;
+        }
+
+        .subtitle {
+            color: lightgray;
         }
 
         #camera-container {
@@ -47,50 +121,96 @@
 
         video {
             width: 100%;
-            max-width: 300px;
+            max-width: 30vw;
             border-radius: 10px;
         }
 
         canvas {
             margin-top: 10px;
             width: 100%;
-            max-width: 300px;
+            max-width: 30vw;
             border-radius: 10px;
-            border: 1px solid black;
+        }
+
+        .button-container {
+            background-color: #1c182d;
+            border-radius: 20px;
+            padding: 10px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-evenly;
         }
 
         .login-button {
-            width: 50%;
             margin: 20px;
-            padding: 10px 40px;
-            font-family: 'Raleway', sans-serif;
-            border-radius: 20px;
+            padding: 20px 50px;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 10px;
             font-weight: 600;
             font-size: 18px;
-            background-color: #6a28d3;
+            background-color: #4b3fb0;
             color: white;
             border: none;
             cursor: pointer;
+        }
+
+        @media only screen and (max-width: 1500px) {
+            .content {
+                width: 35%;
+            }
+        }
+
+        @media only screen and (max-width: 1300px) {
+            .content {
+                width: 40%;
+            }
+        }
+
+        @media only screen and (max-width: 1150px) {
+            .content {
+                width: 45%;
+            }
+        }
+
+        @media only screen and (max-width: 1000px) {
+            .content {
+                width: 500px;
+            }
+        }
+
+
+        @media only screen and (max-width: 700px) {
+            .content {
+                min-height: 100vh;
+                width: 90vw;
+                padding: 100px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="content">
-        <h3 class="m">Lorem.</h3>
-        <!-- Buttons to load image and open camera -->
-        <div id="div-with-buttons">
-            <label for="file-upload" class="login-button">Cargar archivo de imagen</label>
-            <input id="file-upload" type="file" style="display: none;"/>
-            <button class="login-button" id="open-camera">Cámara</button>
+        <h3 class="l tooltip-ai-effect p-no-margin-bottom p-no-margin-top">ChromAI</h3>
+        <div id="start-page-content">
+            <div class="image">placeholder</div>
+            <h4 class="s subtitle">Identificá colores a base de imágenes usando inteligencia artificial</h4>
         </div>
 
-        <!-- Div to display the camera and capture the picture -->
         <div id="camera-container">
             <video id="video" autoplay></video>
-            <button class="login-button" id="capture-button">Capturar Imagen</button>
             <canvas id="canvas"></canvas>
+            <div class="button-container" style="width: 100%">
+                <button class="login-button" id="capture-button">Capturar foto</button>
+            </div>
         </div>
+        <div id="div-with-buttons" class="button-container">
+            <label for="file-upload" class="login-button">Subir imagen</label>
+            <input id="file-upload" type="file" style="display: none;"/>
+            <button class="login-button" id="open-camera">Sacar una foto</button>
+        </div>
+
+
     </div>
 </div>
 
@@ -101,6 +221,8 @@
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const cameraContainer = document.getElementById('camera-container');
+    const startPageContent = document.getElementById('start-page-content')
+    const divWithButtons = document.getElementById('div-with-buttons')
     const context = canvas.getContext('2d');
 
     // Variable to track if the camera is already open
@@ -111,6 +233,9 @@
     {
         // Show the camera container but keep the captured image
         cameraContainer.style.display = 'flex';
+        canvas.style.display = 'none'
+        startPageContent.style.display = 'none';
+        divWithButtons.style.display = 'none';
         video.style.display = 'block';
 
         // Only start the camera stream if it isn't already running
