@@ -74,8 +74,7 @@
             animation: rainbow 20s ease-in-out infinite;
             background-clip: text;
             -webkit-background-clip: text;
-            transition: color .2s ease-in-out;
-            color: rgba(0, 0, 0, 0)
+            color: rgba(255, 255, 255, 255)
         }
 
         @keyframes rainbow {
@@ -91,7 +90,7 @@
         }
 
         .content {
-            min-height: 60vh;
+            min-height: 40vh;
             text-align: center;
             border-radius: 30px;
             padding: 50px;
@@ -141,6 +140,41 @@
             justify-content: space-evenly;
         }
 
+        #results-screen {
+            color: lightgray;
+            background-color: #25213b;
+            border-radius: 20px;
+            padding: 10px;
+            margin-top: 30px;
+            display: none;
+            text-align: center;
+        }
+
+        #colour {
+            background: slategray;
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            margin-right: 7px;
+        }
+
+        .result-image {
+            margin: 20px;
+            width: 300px;
+            height: auto;
+            background: #8c8c8c;
+            border-radius: 12px;
+        }
+
+        .results-container {
+            margin-top: 15px;
+            text-align: center;
+            align-content: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
         .login-button {
             margin: 20px;
             padding: 20px 50px;
@@ -154,6 +188,19 @@
             cursor: pointer;
         }
 
+        .butfil {
+            display: none;
+            width: calc(100% - 40px);
+        }
+
+        .result-flex {
+            display: flex
+        }
+
+        .colour-label {
+            margin-bottom: 20px;
+        }
+
         @media only screen and (max-width: 1500px) {
             .content {
                 width: 35%;
@@ -164,17 +211,41 @@
             .content {
                 width: 40%;
             }
+
+            .results-container .login-button {
+                display: none;
+            }
+
+            .butfil {
+                display: block;
+            }
+
+            .result-image {
+                min-height: 200px
+            }
         }
 
         @media only screen and (max-width: 1150px) {
             .content {
                 width: 45%;
             }
+
+            .l {
+                font-size: calc(3vw + 2vh);
+            }
+
+            .s {
+                font-size: calc(1vw + 1vh);
+            }
         }
 
         @media only screen and (max-width: 1000px) {
             .content {
                 width: 500px;
+            }
+
+            .s {
+                font-size: calc(1.2vw + 1vh);
             }
         }
 
@@ -185,32 +256,93 @@
                 width: 90vw;
                 padding: 100px;
             }
+
+            .p-no-margin-bottom {
+                margin-block-end: 1em;
+                margin-inline-end: 0;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .l {
+                font-size: calc(4vw + 2vh);
+            }
+
+            .s {
+                font-size: calc(1.7vw + 1.2vh);
+            }
+
+            .mm {
+                font-size: calc(2vw + 1.5vh);
+            }
+
+            .colour-label {
+                margin-bottom: 10px;
+            }
+
+            .result-image {
+                width: auto;
+            }
+
+            .result-flex {
+                flex-direction: column;
+            }
+        }
+
+        .hero {
+            width: 100%;
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .hero .logo {
+            width: 80px;
+            display: block;
+            margin: auto;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="content">
-        <h3 class="l tooltip-ai-effect p-no-margin-bottom p-no-margin-top">ChromAI</h3>
-        <div id="start-page-content">
-            <div class="image">placeholder</div>
-            <h4 class="s subtitle">Identificá colores a base de imágenes usando inteligencia artificial</h4>
+        <div class="hero">
+            <img src="logo.png" draggable="false" alt="Logo de ChromAI" class="logo"/>
+            <h3 class="l tooltip-ai-effect p-no-margin-bottom p-no-margin-top">Chrom<span style="color: rgba(0, 0, 0, 0)">AI</span></h3>
         </div>
-
-        <div id="camera-container">
-            <video id="video" autoplay></video>
-            <canvas id="canvas"></canvas>
-            <div class="button-container" style="width: 100%">
-                <button class="login-button" id="capture-button">Capturar foto</button>
+        <div id="start-page-container">
+            <div id="start-page-content">
+                <div class="image"></div>
+                <h4 class="s subtitle">Identificá colores a base de imágenes usando inteligencia artificial</h4>
+            </div>
+            <div id="div-with-buttons" class="button-container">
+                <label for="file-upload" class="login-button">Subir imagen</label>
+                <input id="file-upload" type="file" style="display: none;"/>
+                <button class="login-button" id="open-camera">Sacar una foto</button>
+            </div>
+            <div id="camera-container">
+                <video id="video" autoplay></video>
+                <canvas id="canvas"></canvas>
+                <div class="buttdon-container" style="width: 100%">
+                    <button class="login-button" id="capture-button">Capturar foto</button>
+                </div>
             </div>
         </div>
-        <div id="div-with-buttons" class="button-container">
-            <label for="file-upload" class="login-button">Subir imagen</label>
-            <input id="file-upload" type="file" style="display: none;"/>
-            <button class="login-button" id="open-camera">Sacar una foto</button>
+        <div id="results-screen">
+            <div class="result-flex">
+                <div class="result-image"></div>
+                <div class="results-container">
+                    <span class="colour-label s">Se detectó que el color principal es</span>
+                    <div style="display: flex; align-items: center; align-self: center">
+                        <div id="colour"></div>
+                        <span id="colour-id" class="mm">slategray</span>
+                    </div>
+                    <button class="login-button">Analizar otra imagen</button>
+                </div>
+            </div>
+            <button class="login-button butfil">Analizar otra imagen</button>
         </div>
-
-
     </div>
 </div>
 
@@ -224,13 +356,14 @@
     const startPageContent = document.getElementById('start-page-content')
     const divWithButtons = document.getElementById('div-with-buttons')
     const context = canvas.getContext('2d');
+    const content = document.getElementById('start-page-container');
+    const resultsScreen = document.getElementById('results-screen');
 
     // Variable to track if the camera is already open
     let isCameraOpen = false;
 
     // Function to open the camera (used in both buttons)
-    function openCamera()
-    {
+    function openCamera() {
         // Show the camera container but keep the captured image
         cameraContainer.style.display = 'flex';
         canvas.style.display = 'none'
@@ -239,31 +372,24 @@
         video.style.display = 'block';
 
         // Only start the camera stream if it isn't already running
-        if (!isCameraOpen)
-        {
+        if (!isCameraOpen) {
             navigator.mediaDevices.getUserMedia({video: true})
-                .then(function (stream)
-                {
+                .then(function (stream) {
                     video.srcObject = stream; // Stream the video feed to the video element
                     isCameraOpen = true;
                 })
-                .catch(function (err)
-                {
+                .catch(function (err) {
                     console.log('Error accessing the camera: ' + err);
                 });
         }
     }
 
     // Function to capture the image from the video feed
-    captureButton.addEventListener('click', function ()
-    {
+    captureButton.addEventListener('click', function () {
         // Check if the camera is not running, reopen it
-        if (!isCameraOpen)
-        {
+        if (!isCameraOpen) {
             openCamera();
-        }
-        else
-        {
+        } else {
             // Set canvas dimensions to match the video size
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -274,8 +400,7 @@
             // Optional: Stop the video stream after capturing the image
             const stream = video.srcObject;
             const tracks = stream.getTracks();
-            tracks.forEach(function (track)
-            {
+            tracks.forEach(function (track) {
                 track.stop(); // Stop each track (camera feed)
             });
 
@@ -291,6 +416,12 @@
     // Function to open the camera when clicking "Cámara" button
     openCameraButton.addEventListener('click', openCamera);
 
+    function showResults() {
+        content.style.display = 'none'
+        resultsScreen.style.display = 'block'
+    }
+
+    showResults()
 
 </script>
 </body>
