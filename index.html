@@ -257,6 +257,11 @@
                 padding: 100px;
             }
 
+            .p-no-margin-top {
+                margin-block-end: 1em;
+                margin-inline-end: 0;
+            }
+
             .p-no-margin-bottom {
                 margin-block-end: 1em;
                 margin-inline-end: 0;
@@ -264,6 +269,10 @@
 
             .button-container {
                 flex-direction: column;
+            }
+
+            .login-button {
+                margin: 15px;
             }
 
             .l {
@@ -295,10 +304,12 @@
             width: 100%;
             text-align: center;
             padding: 30px 0;
+            user-select: none;
         }
 
         .hero .logo {
-            width: 80px;
+            max-width: 80px;
+            width: 10vw;
             display: block;
             margin: auto;
         }
@@ -309,7 +320,8 @@
     <div class="content">
         <div class="hero">
             <img src="logo.png" draggable="false" alt="Logo de ChromAI" class="logo"/>
-            <h3 class="l tooltip-ai-effect p-no-margin-bottom p-no-margin-top">Chrom<span style="color: rgba(0, 0, 0, 0)">AI</span></h3>
+            <h3 class="l tooltip-ai-effect p-no-margin-bottom p-no-margin-top">Chrom<span
+                    style="color: rgba(0, 0, 0, 0)">AI</span></h3>
         </div>
         <div id="start-page-container">
             <div id="start-page-content">
