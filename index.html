@@ -391,7 +391,7 @@
         </div>
         <div id="results-screen">
             <div class="result-flex">
-                <div class="result-image"></div>
+                <img id="result-image" class="result-image"/>
                 <div class="results-container">
                     <span class="colour-label s">Se detectó que el color principal es</span>
                     <div style="display: flex; align-items: center; align-self: center">
@@ -422,8 +422,12 @@
     const resultsScreen = document.getElementById('results-screen');
     const fileUploadLabel = document.getElementById('file-upload')
     const uploadingDialog = document.getElementById('uploading-dialog')
+    const resultImage = document.getElementById('result-image')
+    const colourId = document.getElementById('colour-id')
+    const colour = document.getElementById('colour')
 
-    let photo;
+    // Lector de archivos. Se usa para visualizar la imagen cuando se carga.
+    const reader = new FileReader()
 
     // A ver si vamos abriendo la cámara...
     let isCameraOpen = false;
@@ -515,17 +519,26 @@
                 if (result.success)
                 {
                     // Guardame el archivo de la foto para mostrarlo.
-                    this.photo = event.target.files[0];
+                    photo = event.target.files[0];
+                    reader.readAsDataURL(photo);
                     // Seteame los resultados.
-                    this.loadResults(content)
+                    this.loadResults(result.content)
                     // Mostrame los resultados.
                     this.showResults()
                     // Cerrame el diálogo de "Subiendo...".
                     uploadingDialog.close()
                 }
+                else
+                    this.displayUserMessage({type: 'error', message: result.content})
             })
         }
     })
+
+    // Cargar imagen dentro del placeholder.
+    reader.onload = event =>
+    {
+        resultImage.src = event.target.result;
+    }
 
     // Mostrar mensajitos.
     function displayUserMessage(notification)
@@ -574,7 +587,11 @@
     // Cargar los resultados.
     function loadResults(response)
     {
-        // TODO: Cargar la imagen en el recuadro, mostrar todo.
+        let res = JSON.parse(response)
+        let colourName = res.objects[0].dominant_color;
+
+        colourId.innerHTML = colourName;
+        colour.style.background = colourName;
     }
 
     // Cuando esté, mostrame los resultados.
