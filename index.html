@@ -392,8 +392,12 @@
             <div id="camera-container">
                 <video id="video" autoplay></video>
                 <canvas id="canvas"></canvas>
-                <div class="buttdon-container" style="width: 100%">
+                <div class="button-container" style="width: 100%">
                     <button class="login-button" id="capture-button">Capturar foto</button>
+                    <div id="once-picture-taken" style="display: none">
+                        <button class="login-button" id="upload-picture-button">Utilizar esta foto</button>
+                        <button class="login-button" id="open-camera2">Sacar otra foto</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -419,6 +423,7 @@
     // O sea, fijate la cantidad de constantes que tengo que definir para que ésto funcione normalmente.
     // Aguante React loko.
     const openCameraButton = document.getElementById('open-camera');
+    const openCameraButton2 = document.getElementById('open-camera2');
     const captureButton = document.getElementById('capture-button');
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
@@ -433,6 +438,8 @@
     const resultImage = document.getElementById('result-image')
     const colourId = document.getElementById('colour-id')
     const colour = document.getElementById('colour')
+    const oncePictureTaken = document.getElementById('once-picture-taken')
+    const uploadPhotoButton = document.getElementById('upload-picture-button')
 
     // Lector de archivos. Se usa para visualizar la imagen cuando se carga.
     const reader = new FileReader()
@@ -449,6 +456,8 @@
         startPageContent.style.display = 'none';
         divWithButtons.style.display = 'none';
         video.style.display = 'block';
+        captureButton.style.display = 'inherit'
+        oncePictureTaken.style.display = 'none'
 
         // Sólo encender el stream de la cámara si es que ésta no se encuentra ejecutándose.
         if (!isCameraOpen)
@@ -497,12 +506,16 @@
 
             // Para terminar, cerrame la cámara.
             isCameraOpen = false;
+
+            captureButton.style.display = 'none'
+            oncePictureTaken.style.display = 'inherit'
         }
     });
 
     // Un poco de eventos.
     // Abrime la cámara cuando cliqueás en "Sacar foto".
-    openCameraButton.addEventListener('click', openCamera);
+    openCameraButton.addEventListener('click', openCamera)
+    openCameraButton2.addEventListener('click', openCamera)
 
     // Cuando seleccionás una imagen, subila.
     fileUploadLabel.addEventListener('change', (event) =>
@@ -546,6 +559,29 @@
     reader.onload = event =>
     {
         resultImage.src = event.target.result;
+    }
+
+    // Subir foto.
+    uploadPhotoButton.addEventListener('click', () => uploadCanvasContent())
+
+    // Obtener el contenido del canvas y subirlo.
+    function uploadCanvasContent()
+    {
+        // Obtener el contenido del canvas como una URL en formato base64.
+        const dataURL = canvas.toDataURL('image/png');
+
+        // Convertirlo a un Blob amorfo.
+        fetch(dataURL)
+            .then(res => res.blob())
+            .then(blob =>
+            {
+                // Creame un archivo a partir del blob.
+                const file = new File([blob], 'canvas-image.png', {type: 'image/png'});
+
+                // Subime la foto.
+                upload(file);
+            })
+            .catch(err => this.displayUserMessage({type: 'error', message: 'Error al crear el archivo:' + err}));
     }
 
     // Mostrar mensajitos.
