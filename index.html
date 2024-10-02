@@ -105,6 +105,7 @@
             height: 250px;
             background-image: url("banner.png");
             background-size: cover;
+            background-position: center;
             border-radius: 20px;
         }
 
@@ -206,6 +207,10 @@
             .content {
                 width: 35%;
             }
+
+            .notice {
+                width: calc(35% - 20px) !important;
+            }
         }
 
         @media only screen and (max-width: 1300px) {
@@ -224,6 +229,11 @@
             .result-image {
                 min-height: 200px
             }
+
+            .notice {
+                width: calc(40% - 20px) !important;
+                top: 90px;
+            }
         }
 
         @media only screen and (max-width: 1150px) {
@@ -238,6 +248,10 @@
             .s {
                 font-size: calc(1vw + 1vh);
             }
+
+            .notice {
+                width: calc(45% - 20px) !important;
+            }
         }
 
         @media only screen and (max-width: 1000px) {
@@ -248,6 +262,10 @@
             .s {
                 font-size: calc(1.2vw + 1vh);
             }
+
+            .notice {
+                width: 480px !important;
+            }
         }
 
 
@@ -256,6 +274,11 @@
                 min-height: 100vh;
                 width: 90vw;
                 padding: 100px;
+            }
+
+            .notice {
+                width: calc(90vw - 20px) !important;
+                top: 40px !important;
             }
 
             .p-no-margin-top {
@@ -314,6 +337,26 @@
             display: block;
             margin: auto;
         }
+
+        .notice {
+            position: absolute;
+            top: 80px;
+            text-align: center;
+            width: calc(30% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .error {
+            color: #541417;
+            background: #ffb3b3;
+        }
+
+        .success {
+            background: #a0ff7e;
+            color: #157e00;
+        }
     </style>
 </head>
 <body>
@@ -322,6 +365,7 @@
         <span class="m">Subiendo...</span>
     </dialog>
     <div class="content">
+        <div id="notice" class="notice s" style="display: none"></div>
         <div class="hero">
             <img src="logo.png" draggable="false" alt="Logo de ChromAI" class="logo"/>
             <h3 class="l tooltip-ai-effect p-no-margin-bottom p-no-margin-top">Chrom<span
@@ -484,11 +528,18 @@
     })
 
     // Mostrar mensajitos.
-    function displayUserMessage(message)
+    function displayUserMessage(notification)
     {
-        // TODO: Implementar el popup.
+        const notice = document.getElementById('notice')
+
+        notice.className = 'notice s ' + notification.type
+        notice.innerHTML = notification.message
+
+        notice.style.display = 'block'
+        setTimeout(() => notice.style.display = 'none', 5000)
+
         console.log('[PASÓ ALGO]')
-        console.log(message)
+        console.log(notification)
     }
 
     // Función para subir imágenes en multipart. Un placer.
@@ -532,7 +583,6 @@
         content.style.display = 'none'
         resultsScreen.style.display = 'block'
     }
-
 </script>
 </body>
 </html>
