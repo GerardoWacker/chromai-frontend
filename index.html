@@ -317,6 +317,9 @@
 </head>
 <body>
 <div class="container">
+    <dialog id="uploading-dialog" class="dashboard-modal">
+        <span class="m">Subiendo...</span>
+    </dialog>
     <div class="content">
         <div class="hero">
             <img src="logo.png" draggable="false" alt="Logo de ChromAI" class="logo"/>
@@ -359,7 +362,9 @@
 </div>
 
 <script>
-    // Accessing elements
+    // Un poco de definición de elementos. JavaScript vanilla es un poco tedioso para manejar.
+    // O sea, fijate la cantidad de constantes que tengo que definir para que ésto funcione normalmente.
+    // Aguante React loko.
     const openCameraButton = document.getElementById('open-camera');
     const captureButton = document.getElementById('capture-button');
     const video = document.getElementById('video');
@@ -370,65 +375,159 @@
     const context = canvas.getContext('2d');
     const content = document.getElementById('start-page-container');
     const resultsScreen = document.getElementById('results-screen');
+    const fileUploadLabel = document.getElementById('file-upload')
+    const uploadingDialog = document.getElementById('uploading-dialog')
 
-    // Variable to track if the camera is already open
+    let photo;
+
+    // A ver si vamos abriendo la cámara...
     let isCameraOpen = false;
 
-    // Function to open the camera (used in both buttons)
-    function openCamera() {
-        // Show the camera container but keep the captured image
+    // Oh Caperucita, es para observarte mejor...
+    function openCamera()
+    {
+        // Mostrar el contenedor de la imagen directamente, y ocultar el resto que no necesita.
         cameraContainer.style.display = 'flex';
         canvas.style.display = 'none'
         startPageContent.style.display = 'none';
         divWithButtons.style.display = 'none';
         video.style.display = 'block';
 
-        // Only start the camera stream if it isn't already running
-        if (!isCameraOpen) {
+        // Sólo encender el stream de la cámara si es que ésta no se encuentra ejecutándose.
+        if (!isCameraOpen)
+        {
             navigator.mediaDevices.getUserMedia({video: true})
-                .then(function (stream) {
+                .then(function (stream)
+                {
                     video.srcObject = stream; // Stream the video feed to the video element
                     isCameraOpen = true;
                 })
-                .catch(function (err) {
+                .catch(function (err)
+                {
                     console.log('Error accessing the camera: ' + err);
                 });
         }
     }
 
-    // Function to capture the image from the video feed
-    captureButton.addEventListener('click', function () {
-        // Check if the camera is not running, reopen it
-        if (!isCameraOpen) {
+    // Agarrá los datos que vienen del feed de la cámara, capturalos, y envialos al video.
+    captureButton.addEventListener('click', function ()
+    {
+        // Che, ¿pero no habíamos abierto la cámara? Bueno. Ésto es por las dudelis.
+        if (!isCameraOpen)
+        {
             openCamera();
-        } else {
-            // Set canvas dimensions to match the video size
+        }
+        else
+        {
+            // Haceme el canvas para que tenga el tamaño del video.
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
 
-            // Draw the current video frame on the canvas
+            // Y dibujámelo.
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // Optional: Stop the video stream after capturing the image
+            // Cuando terminamos de capturar la foto, parame el stream del video así no consumimos recursos.
             const stream = video.srcObject;
             const tracks = stream.getTracks();
-            tracks.forEach(function (track) {
-                track.stop(); // Stop each track (camera feed)
+            tracks.forEach(function (track)
+            {
+                track.stop()
             });
 
-            // Keep the canvas visible and hide the video feed
+            // Cuando ya 'ta, ocultame el video y mostrame el canvas.
             canvas.style.display = 'block';
             video.style.display = 'none';
 
-            // Mark the camera as closed
+            // Para terminar, cerrame la cámara.
             isCameraOpen = false;
         }
     });
 
-    // Function to open the camera when clicking "Cámara" button
+    // Un poco de eventos.
+    // Abrime la cámara cuando cliqueás en "Sacar foto".
     openCameraButton.addEventListener('click', openCamera);
 
-    function showResults() {
+    // Cuando seleccionás una imagen, subila.
+    fileUploadLabel.addEventListener('change', (event) =>
+    {
+        // Chequeá que sea sólo de estos formatos, y menor a 5 mb (me saturás el servidor si no).
+        const allowedFiles = ['jpg', 'jpeg', 'png', 'webp']
+        if (event.target.files && event.target.files[0])
+        {
+            if (!allowedFiles.includes(event.target.files[0].name.split('.').pop()))
+                return this.displayUserMessage({
+                    type: 'error',
+                    message: '¡El formato seleccionado de la imagen es incorrecto! Sólo se permiten JPG, PNG o WebP.'
+                })
+            if (event.target.files[0].size / 1024 / 1024 > 5)
+                return this.displayUserMessage({type: 'error', message: '¡El archivo seleccionado es muy grande!'})
+            // Mostrar el diálogo de "Subiendo...".
+            uploadingDialog.showModal()
+            // Subir el archivo.
+            upload(event.target.files[0]).then(result =>
+            {
+                // Si salió bien...
+                if (result.success)
+                {
+                    // Guardame el archivo de la foto para mostrarlo.
+                    this.photo = event.target.files[0];
+                    // Seteame los resultados.
+                    this.loadResults(content)
+                    // Mostrame los resultados.
+                    this.showResults()
+                    // Cerrame el diálogo de "Subiendo...".
+                    uploadingDialog.close()
+                }
+            })
+        }
+    })
+
+    // Mostrar mensajitos.
+    function displayUserMessage(message)
+    {
+        // TODO: Implementar el popup.
+        console.log('[PASÓ ALGO]')
+        console.log(message)
+    }
+
+    // Función para subir imágenes en multipart. Un placer.
+    function upload(file)
+    {
+        // Se pretende hacer un Promise para garantizar el comportamiento asincrónico.
+        return new Promise(res =>
+        {
+            // Crear un objeto de formulario para poder enviarlo por multipart.
+            const data = new FormData()
+            // Agregarle la imagen correspondiente como `file`.
+            data.append('file', file)
+
+            // Realizar la petición hacia el endpoint correspondiente.
+            fetch('https://fe3d-181-167-70-207.ngrok-free.app/detect/', {
+                method: 'POST',
+                body: data
+            }).then(r =>
+            {
+                // Si no está pipi cucú, mostrar dónde quedamos.
+                if (r.status !== 200)
+                    return r.text().then(response => res({success: false, status: r.status, content: response}))
+                r.text().then(response =>
+                {
+                    // Ahh, pero si 'ta bien, mandale nomás.
+                    return res({success: true, content: response})
+                })
+            })
+        })
+    }
+
+    // Cargar los resultados.
+    function loadResults(response)
+    {
+        // TODO: Cargar la imagen en el recuadro, mostrar todo.
+    }
+
+    // Cuando esté, mostrame los resultados.
+    function showResults()
+    {
         content.style.display = 'none'
         resultsScreen.style.display = 'block'
     }
