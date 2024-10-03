@@ -565,8 +565,6 @@
                     reader.readAsDataURL(photo);
                     // Seteame los resultados.
                     loadResults(result.content)
-                    // Mostrame los resultados.
-                    showResults()
                     // Cerrame el diálogo de "Subiendo...".
                     uploadingDialog.close()
                 }
@@ -615,8 +613,7 @@
                         reader.readAsDataURL(photo);
                         // Seteame los resultados.
                         loadResults(result.content)
-                        // Mostrame los resultados.
-                        showResults()
+
                         // Cerrame el diálogo de "Subiendo...".
                         uploadingDialog.close()
                     }
@@ -675,10 +672,16 @@
     function loadResults(response)
     {
         let res = JSON.parse(response)
+        if(res.objects.length === 0)
+            return displayUserMessage({type: 'error', message: 'No se detectaron objetos en la imagen'})
+
         let colourName = res.objects[0].dominant_color;
 
         colourId.innerHTML = colourName;
         colour.style.background = colourName;
+
+        // Mostrame los resultados.
+        showResults()
     }
 
     // Volver al principio.
