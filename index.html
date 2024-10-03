@@ -162,9 +162,10 @@
 
         .result-image {
             margin: 20px;
-            width: 300px;
+            width: 40%;
             height: auto;
-            background: #8c8c8c;
+            background-size: cover;
+            background-position: center;
             border-radius: 12px;
         }
 
@@ -227,7 +228,8 @@
             }
 
             .result-image {
-                min-height: 200px
+                width: 200px;
+                height: 200px;
             }
 
             .notice {
@@ -281,16 +283,6 @@
                 top: 40px !important;
             }
 
-            .p-no-margin-top {
-                margin-block-end: 1em;
-                margin-inline-end: 0;
-            }
-
-            .p-no-margin-bottom {
-                margin-block-end: 1em;
-                margin-inline-end: 0;
-            }
-
             .button-container {
                 flex-direction: column;
             }
@@ -316,7 +308,7 @@
             }
 
             .result-image {
-                width: auto;
+                align-self: center;
             }
 
             .result-flex {
@@ -403,7 +395,7 @@
         </div>
         <div id="results-screen">
             <div class="result-flex">
-                <img id="result-image" class="result-image"/>
+                <div id="result-image" class="result-image"></div>
                 <div class="results-container">
                     <span class="colour-label s">Se detectó que el color principal es</span>
                     <div style="display: flex; align-items: center; align-self: center">
@@ -577,7 +569,7 @@
     // Cargar imagen dentro del placeholder.
     reader.onload = event =>
     {
-        resultImage.src = event.target.result;
+        resultImage.style.backgroundImage = "url(\"" + event.target.result + "\")";
     }
 
     // Subir foto.
